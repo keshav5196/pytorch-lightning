@@ -714,7 +714,10 @@ def test_devices_auto_choice_cpu(
 
 @mock.patch("torch.cuda.is_available", return_value=True)
 @mock.patch("torch.cuda.device_count", return_value=2)
-def test_devices_auto_choice_gpu(is_gpu_available_mock, device_count_mock):
+@mock.patch("torch.backends.mps.is_available", return_value=False)
+@mock.patch("pytorch_lightning.utilities.imports._MPS_AVAILABLE", return_value=False)
+def test_devices_auto_choice_gpu(is_gpu_available_mock, device_count_mock, mps_backend_mock, is_mps_available_mock):
+
     trainer = Trainer(accelerator="auto", devices="auto")
     assert isinstance(trainer.accelerator, GPUAccelerator)
     assert trainer.num_devices == 2
